@@ -5,22 +5,34 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 // Ollama
 import { createOllama } from 'ollama-ai-provider';
 const ollama = createOllama({
-    baseURL: process.env.OLLAMA_BASE_URL
+    baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434'
 });
 
 type ToolCall = {
   type: "tool-call";
   toolCallId: string;
-  toolName: "createConstellation";
-  args: {
-    numSatellites: number;
-    numPlanes: number;
-    altitudesPerPlane: number[];
+  toolName: string;
+  args: any;
+};
+
+type ToolResult = {
+  name: string;
+  result?: any;
+  error?: string;
+};
+
+type ToolDefinition = {
+  description: string;
+  parameters: {
+    type: string;
+    properties: Record<string, any>;
+    required: string[];
   };
+  handler: (params: any) => Promise<any>;
 };
 
 // Tool definitions
-const tools = {
+const tools: Record<string, ToolDefinition> = {
   createConstellation: {
     description: "Create a constellation of satellites with specified parameters",
     parameters: {
@@ -88,11 +100,19 @@ export default async function handler(
 
     console.log('Generating response with Ollama...');
 
+    const model = ollama(process.env.OLLAMA_MODEL_NAME || "llama2");
+    const toolSet = {
+      createConstellation: {
+        description: tools.createConstellation.description,
+        parameters: tools.createConstellation.parameters
+      }
+    };
+
     const { text, toolCalls } = await generateText({
-      model: ollama(process.env.OLLAMA_MODEL_NAME || "llama2"),
+      model,
       prompt: prompt,
       maxTokens: 512,
-      tools: tools,
+      tools: toolSet
     });
 
     console.log('Response: ', text);
@@ -103,13 +123,13 @@ export default async function handler(
       console.log(`Processing ${toolCalls.length} tool calls...`);
       
       const toolResults = await Promise.all(
-        toolCalls.map(async (toolCall: ToolCall) => {
+        toolCalls.map(async (toolCall: ToolCall): Promise<ToolResult> => {
           console.log(`Processing tool call: ${toolCall.toolName}`, {
             toolCallId: toolCall.toolCallId,
             args: toolCall.args
           });
 
-          const tool = tools[toolCall.toolName];
+          const tool = tools[toolCall.toolName as keyof typeof tools];
           if (tool && 'handler' in tool) {
             console.log(`Executing handler for ${toolCall.toolName}...`);
             try {
@@ -128,7 +148,10 @@ export default async function handler(
             }
           }
           console.warn(`No handler found for tool: ${toolCall.toolName}`);
-          return null;
+          return {
+            name: toolCall.toolName,
+            error: 'Tool not found'
+          };
         })
       );
 
