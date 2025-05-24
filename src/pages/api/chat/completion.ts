@@ -66,16 +66,10 @@ Ask: "Would you like to generate this constellation now?"
           description: 'Create a new satellite constellation. Only use this tool when the user explicitly requests to create a constellation.',
           parameters: z.object({
             numSatellites: z.number()
-              .min(1)
-              .max(60)
               .describe('Total number of satellites in the constellation (1-60)'),
             numPlanes: z.number()
-              .min(1)
-              .max(10)
               .describe('Number of orbital planes (1-10)'),
             altitudesPerPlane: z.number()
-              .min(160)
-              .max(2000)
               .describe('Altitude per Plane in km (160-2000)'),
           }),
           execute: async ({ numSatellites, numPlanes, altitudesPerPlane }) => {
@@ -92,9 +86,9 @@ Ask: "Would you like to generate this constellation now?"
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                numSatellites: Number(numSatellites),
-                numPlanes: Number(numPlanes),
-                altitudesPerPlane: Number(altitudesPerPlane),
+                numSatellites: numSatellites < 1 ? 1 : Number(numSatellites),
+                numPlanes: numPlanes < 1 ? 1 : Number(numPlanes),
+                altitudesPerPlane: 500
               }),
             });
 
