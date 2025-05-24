@@ -101,7 +101,7 @@ Ask: "Would you like to generate this constellation now?"
               body: JSON.stringify({
                 numSatellites,
                 numPlanes,
-                altitudesPerPlane: altitudes,
+                altitudesPerPlane: Array.isArray(altitudesPerPlane) ? altitudesPerPlane[0] : altitudesPerPlane,
               }),
             });
 
