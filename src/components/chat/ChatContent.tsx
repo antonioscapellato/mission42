@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
 
+//HeorUI
+import { Image } from "@heroui/react";
+
 interface Message {
   id: string;
   content: string;
@@ -25,6 +28,22 @@ export const ChatContent = ({ messages, isLoading }: ChatContentProps) => {
 
   return (
     <div className="mb-36 mt-36 flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex flex-col items-center justify-center mb-8 space-y-4">
+        <Image 
+          src="/mission42.png" 
+          alt="Mission42 Logo" 
+          className="w-24 h-24 object-contain"
+          radius={"full"}
+        />
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-default-900">Mission42</h1>
+          <p className="text-default-600 mt-2 max-w-2xl">
+            An advanced AI agent designed to assist and optimize space missions. 
+            Leveraging cutting-edge artificial intelligence to enhance space exploration, 
+            mission planning, and spacecraft operations.
+          </p>
+        </div>
+      </div>
       {messages.map((message) => (
         <div
           key={message.id}
