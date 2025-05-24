@@ -4,15 +4,17 @@ import { useState } from "react";
 
 //Icons
 import { LuSend } from "react-icons/lu";
+import { LuTrash2 } from "react-icons/lu";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   isLoading?: boolean;
   message: string;
   onMessageChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onClearChat: () => void;
 }
 
-export const ChatInput = ({ onSendMessage, isLoading = false, message, onMessageChange }: ChatInputProps) => {
+export const ChatInput = ({ onSendMessage, isLoading = false, message, onMessageChange, onClearChat }: ChatInputProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && !isLoading) {
@@ -21,21 +23,34 @@ export const ChatInput = ({ onSendMessage, isLoading = false, message, onMessage
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 p-4 border-t">
+    <form onSubmit={handleSubmit} className="w-full max-w-6xl fixed bottom-5 z-40 flex gap-2 p-4">
       <Textarea
+        variant={"bordered"}
         value={message}
         onChange={onMessageChange}
         placeholder="Type your message..."
-        className=""
+        className="bg-default-100 rounded-2xl"
         disabled={isLoading}
-      />
-      <Button
-        type="submit"
-        disabled={!message.trim() || isLoading}
-        isLoading={isLoading}
-        isIconOnly
-        className={""}
-        startContent={<LuSend size={24} />}
+        endContent={
+          <div className={"space-x-2 flex items-center align-center justify-center"}>
+          <Button
+            onPress={onClearChat}
+            size={"sm"}
+            className="bg-default-200 text-default-900"
+            
+          >
+            Clear
+          </Button>
+          <Button
+            type="submit"
+            disabled={!message.trim() || isLoading}
+            isIconOnly
+            size={"sm"}
+            className={`${!message.trim() || isLoading ? 'bg-default-400' : 'bg-default-900'} text-default-100`}
+            startContent={<LuSend size={16} />}
+          />
+          </div>
+        }
       />
     </form>
   );

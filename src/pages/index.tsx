@@ -54,14 +54,6 @@ export default function Home() {
       <main className="flex flex-col h-screen">
         <div className={"w-full flex-1 flex flex-col items-center align-center justify-center align-center"}>
           <div className="max-w-6xl w-full">
-            <div className="flex justify-end p-4">
-              <button
-                onClick={handleClearChat}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Clear Chat
-              </button>
-            </div>
             <ChatContent 
               messages={messages.map(msg => ({
                 id: msg.id,
@@ -78,6 +70,7 @@ export default function Home() {
               isLoading={isLoading}
               message={input}
               onMessageChange={handleInputChange}
+              onClearChat={handleClearChat}
             />
           </div>
         </div>
