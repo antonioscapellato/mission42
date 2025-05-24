@@ -15,7 +15,8 @@ Making Space Great Again
 
 05:00 - Presentation + Demo
 06:00 - Final setting
-
+06:30 - Presenting
+08:00 - Final Results
 
 ### Deliverables
 - Live Prototype
