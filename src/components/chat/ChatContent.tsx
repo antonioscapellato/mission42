@@ -36,7 +36,7 @@ export const ChatContent = ({ messages, isLoading }: ChatContentProps) => {
             className={`max-w-[70%] rounded-lg p-3 ${
               message.sender === "user"
                 ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-900"
+                : "bg-default-100 text-default-900"
             }`}
           >
             <p className="whitespace-pre-wrap">{message.content}</p>
@@ -48,11 +48,11 @@ export const ChatContent = ({ messages, isLoading }: ChatContentProps) => {
       ))}
       {isLoading && (
         <div className="flex justify-start">
-          <div className="bg-gray-100 rounded-lg p-3">
+          <div className="bg-default-100 rounded-lg p-3">
             <div className="flex space-x-2">
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
+              <div className="w-2 h-2 bg-default-400 rounded-full animate-bounce" />
+              <div className="w-2 h-2 bg-default-400 rounded-full animate-bounce delay-100" />
+              <div className="w-2 h-2 bg-default-400 rounded-full animate-bounce delay-200" />
             </div>
           </div>
         </div>
