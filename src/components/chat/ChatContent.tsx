@@ -24,7 +24,7 @@ export const ChatContent = ({ messages, isLoading }: ChatContentProps) => {
   }, [messages]);
 
   return (
-    <div className="mb-36 flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="mb-36 mt-36 flex-1 overflow-y-auto p-4 space-y-4">
       {messages.map((message) => (
         <div
           key={message.id}
