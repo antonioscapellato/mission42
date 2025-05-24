@@ -6,11 +6,17 @@ import type { AppProps } from "next/app";
 
 //HeorUI
 import { HeroUIProvider } from "@heroui/react";
+import {ThemeProvider as NextThemesProvider} from "next-themes";
+
+
 
 export default function App({ Component, pageProps }: AppProps) {
+
   return (
     <HeroUIProvider>
-      <Component {...pageProps} />
+      <NextThemesProvider attribute="class" defaultTheme="dark">
+        <Component {...pageProps} />
+      </NextThemesProvider>
     </HeroUIProvider>
   )
 }
