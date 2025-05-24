@@ -31,6 +31,7 @@ export default function Home() {
 
   return (
     <>
+    
       <Head>
         <title>{seoData.title}</title>
         <meta name="description" content={seoData.description} />
@@ -56,6 +57,7 @@ export default function Home() {
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={seoData.ogUrl} />
       </Head>
+
       <main className="flex flex-col h-screen">
         <div className={"w-full flex-1 flex flex-col items-center align-center justify-center align-center"}>
           <ChatHeader />
