@@ -39,17 +39,56 @@ You can assist with constellation design, orbital parameters, and provide expert
     const { text } = await generateText({
       model,
       prompt,
+      maxSteps: 1,
       maxTokens: 512,
       tools: {
-        weather: tool({
-          description: 'Get the weather in a location',
+        createConstellation: tool({
+          description: 'Create a satellite constellation with specified parameters',
           parameters: z.object({
-            location: z.string().describe('The location to get the weather for'),
+            numSatellites: z.number().describe('Total number of satellites in the constellation'),
+            numPlanes: z.number().describe('Number of orbital planes'),
+            altitudesPerPlane: z.union([
+              z.number().describe('Single altitude in kilometers for all planes'),
+              z.array(z.number()).describe('Array of altitudes in kilometers for each plane')
+            ]),
           }),
-          execute: async ({ location }) => ({
-            location,
-            temperature: 72 + Math.floor(Math.random() * 21) - 10,
-          }),
+          execute: async ({ numSatellites, numPlanes, altitudesPerPlane }) => {
+            console.log('🛰️ Constellation creation requested with parameters:');
+            console.log('  - Number of satellites:', numSatellites);
+            console.log('  - Number of planes:', numPlanes);
+            
+            // Convert single altitude to array if needed
+            const altitudes = Array.isArray(altitudesPerPlane) 
+              ? altitudesPerPlane 
+              : Array(numPlanes).fill(altitudesPerPlane);
+            
+            console.log('  - Altitudes per plane:', altitudes);
+            
+            console.log('📡 Sending request to TravellingSpaceman API...');
+            const response = await fetch('https://www.travellingspaceman.com/api/constellation', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                numSatellites,
+                numPlanes,
+                altitudesPerPlane: altitudes,
+              }),
+            });
+
+            if (!response.ok) {
+              console.error('❌ API request failed:', response.status, response.statusText);
+              throw new Error(`Failed to create constellation: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            console.log('✨ Constellation successfully created:');
+            console.log('  - Response status:', response.status);
+            console.log('  - Response data:', JSON.stringify(result, null, 2));
+            
+            return `Successfully created constellation with ${numSatellites} satellites across ${numPlanes} planes at altitudes ${altitudes.join(', ')} km`;
+          },
         }),
       },
     });
