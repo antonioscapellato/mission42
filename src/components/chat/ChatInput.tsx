@@ -20,12 +20,22 @@ export const ChatInput = ({ onSendMessage, isLoading = false, message, onMessage
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (message.trim() && !isLoading) {
+        onSendMessage(message);
+      }
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-6xl fixed bottom-5 z-40 flex gap-2 p-4">
       <Textarea
         variant={"bordered"}
         value={message}
         onChange={onMessageChange}
+        onKeyDown={handleKeyDown}
         placeholder="Type your message..."
         className="bg-default-100 rounded-2xl"
         disabled={isLoading}
