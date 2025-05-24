@@ -35,7 +35,7 @@ export const ChatContent = ({ messages, isLoading }: ChatContentProps) => {
           <div
             className={`max-w-[70%] rounded-lg p-3 ${
               message.sender === "user"
-                ? "bg-default-900 text-white"
+                ? "bg-default-900 text-default-100"
                 : "bg-default-100 text-default-900"
             }`}
           >
