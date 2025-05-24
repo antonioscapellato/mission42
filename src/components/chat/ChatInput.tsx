@@ -1,16 +1,14 @@
 //NextJS
 import { Button, Textarea } from "@heroui/react";
-import { useState } from "react";
 
 //Icons
 import { LuSend } from "react-icons/lu";
-import { LuTrash2 } from "react-icons/lu";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   isLoading?: boolean;
   message: string;
-  onMessageChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onMessageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClearChat: () => void;
 }
 

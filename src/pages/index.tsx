@@ -24,6 +24,10 @@ export default function Home() {
     setMessages([]);
   };
 
+  const handleInputChangeWrapper = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleInputChange(e as any);
+  };
+
   return (
     <>
       <Head>
@@ -69,7 +73,7 @@ export default function Home() {
               }}
               isLoading={isLoading}
               message={input}
-              onMessageChange={handleInputChange}
+              onMessageChange={handleInputChangeWrapper}
               onClearChat={handleClearChat}
             />
           </div>
