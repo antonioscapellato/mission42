@@ -16,14 +16,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && !isLoading) {
-      onSendMessage(message);
+      onSendMessage(message.trim());
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e);
+      if (message.trim() && !isLoading) {
+        onSendMessage(message.trim());
+      }
     }
   };
 

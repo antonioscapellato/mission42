@@ -43,10 +43,12 @@ export default async function handler(
 
     console.log('Response generated successfully!');
 
-    return res.status(200).json({ 
+    // Send the response as JSON
+    return res.status(200).json({
       id: Date.now().toString(),
       role: 'assistant',
-      content: text
+      content: text,
+      createdAt: Date.now()
     });
   } catch (error) {
     console.error('❌ Error processing chat completion:', error);

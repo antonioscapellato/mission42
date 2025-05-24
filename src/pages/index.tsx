@@ -1,8 +1,6 @@
 //NextJS
 import React from "react";
 import Head from "next/head";
-import { useChat } from 'ai/react';
-import type { Message } from 'ai';
 
 // SEO Data for the space mission AI agent
 const seoData = {
@@ -17,21 +15,14 @@ const seoData = {
 //Components
 import { ChatContent } from "@/components/chat/ChatContent";
 import { ChatInput } from "@/components/chat/ChatInput";
+import { useChatState } from "@/hooks/useChatState";
 
 export default function Home() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/chat/completion',
-    onResponse: (response) => {
-      // Handle any response processing if needed
-      console.log('Response received:', response);
-    },
-    onFinish: (message: Message) => {
-      console.log('Message completed:', message);
-    },
-    body: {
-      // Add any additional parameters needed for the API
-    },
-  });
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChatState();
+
+  const handleClearChat = () => {
+    setMessages([]);
+  };
 
   return (
     <>
@@ -61,24 +52,34 @@ export default function Home() {
         <link rel="canonical" href={seoData.ogUrl} />
       </Head>
       <main className="flex flex-col h-screen">
-        <div className="flex-1 flex flex-col">
-          <ChatContent 
-            messages={messages.map(msg => ({
-              id: msg.id,
-              content: msg.content,
-              sender: msg.role === 'user' ? 'user' : 'assistant',
-              timestamp: new Date()
-            }))} 
-            isLoading={isLoading}
-          />
-          <ChatInput 
-            onSendMessage={(message: string) => {
-              handleSubmit(new Event('submit') as any);
-            }}
-            isLoading={isLoading}
-            message={input}
-            onMessageChange={handleInputChange}
-          />
+        <div className={"w-full flex-1 flex flex-col items-center align-center justify-center align-center"}>
+          <div className="max-w-6xl w-full">
+            <div className="flex justify-end p-4">
+              <button
+                onClick={handleClearChat}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Clear Chat
+              </button>
+            </div>
+            <ChatContent 
+              messages={messages.map(msg => ({
+                id: msg.id,
+                content: msg.content,
+                sender: msg.role === 'user' ? 'user' : 'assistant',
+                timestamp: new Date(msg.createdAt)
+              }))} 
+              isLoading={isLoading}
+            />
+            <ChatInput 
+              onSendMessage={(message: string) => {
+                handleSubmit(new Event('submit') as any);
+              }}
+              isLoading={isLoading}
+              message={input}
+              onMessageChange={handleInputChange}
+            />
+          </div>
         </div>
       </main>
     </>

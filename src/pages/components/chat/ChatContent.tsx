@@ -20,6 +20,7 @@ export const ChatContent: React.FC<ChatContentProps> = ({ messages, isLoading })
   };
 
   useEffect(() => {
+    console.log('Messages updated:', messages);
     scrollToBottom();
   }, [messages]);
 
