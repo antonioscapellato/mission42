@@ -5,7 +5,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 // Ollama
 import { createOllama } from 'ollama-ai-provider';
 const ollama = createOllama({
-    // optional settings, e.g.
     baseURL: process.env.OLLAMA_BASE_URL
 });
 
@@ -50,7 +49,7 @@ const tools = {
       numPlanes: number;
       altitudesPerPlane: number[];
     }) => {
-      const response = await fetch('http://localhost:3000/api/constellation', {
+      const response = await fetch('http://localhost:3001/api/constellation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,20 +76,23 @@ export default async function handler(
     const { messages } = req.body;
     console.log('Processing messages:', messages.length, 'messages received');
     
-    // Convert messages array into a prompt string
-    const prompt = messages.map((msg: any) => 
+    // Add system prompt
+    const systemPrompt = "You are Mission42, an AI agent specialized in helping users set up and manage satellite constellations. You can assist with constellation design, orbital parameters, and provide expert guidance on satellite deployment and management.";
+    
+    // Convert messages array into a prompt string, including system prompt
+    const prompt = `${systemPrompt}\n\n${messages.map((msg: any) => 
       `${msg.role}: ${msg.content}`
-    ).join('\n');
+    ).join('\n')}`;
 
     console.log('Generated prompt:', prompt.substring(0, 100) + '...');
 
     console.log('Generating response with Ollama...');
 
     const { text, toolCalls } = await generateText({
-      model: ollama(process.env.OLLAMA_MODEL_NAME || ""),
+      model: ollama(process.env.OLLAMA_MODEL_NAME || "llama2"),
       prompt: prompt,
       maxTokens: 512,
-      tools: tools
+      tools: tools,
     });
 
     console.log('Response: ', text);
