@@ -15,6 +15,7 @@ const seoData = {
 //Components
 import { ChatContent } from "@/components/chat/ChatContent";
 import { ChatInput } from "@/components/chat/ChatInput";
+import ChatHeader from "@/components/chat/ChatHeader";
 import { useChatState } from "@/hooks/useChatState";
 
 export default function Home() {
@@ -57,6 +58,7 @@ export default function Home() {
       </Head>
       <main className="flex flex-col h-screen">
         <div className={"w-full flex-1 flex flex-col items-center align-center justify-center align-center"}>
+          <ChatHeader />
           <div className="max-w-6xl w-full">
             <ChatContent 
               messages={messages.map(msg => ({
