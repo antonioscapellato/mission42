@@ -65,27 +65,25 @@ Ask: "Would you like to generate this constellation now?"
         createConstellation: tool({
           description: 'Create a new satellite constellation. Only use this tool when the user explicitly requests to create a constellation.',
           parameters: z.object({
-            numSatellites: z.number().default(0).describe('Total number of satellites in the constellation'),
-            numPlanes: z.number().default(0).describe('Number of orbital planes'),
-            altitudesPerPlane: z.union([
-              z.number().default(0).describe('Single altitude in kilometers for all planes'),
-              z.array(z.number()).default([0]).describe('Array of altitudes in kilometers for each plane'),
-              z.string().transform((val) => {
-                try {
-                  const parsed = JSON.parse(val);
-                  return Array.isArray(parsed) ? parsed : [0];
-                } catch {
-                  return [0];
-                }
-              })
-            ]),
+            numSatellites: z.number()
+              .min(1)
+              .max(60)
+              .describe('Total number of satellites in the constellation (1-60)'),
+            numPlanes: z.number()
+              .min(1)
+              .max(10)
+              .describe('Number of orbital planes (1-10)'),
+            altitudesPerPlane: z.number()
+              .min(160)
+              .max(2000)
+              .describe('Altitude per Plane in km (160-2000)'),
           }),
-          execute: async ({ numSatellites = 1, numPlanes = 1, altitudesPerPlane = 160 }) => {
+          execute: async ({ numSatellites, numPlanes, altitudesPerPlane }) => {
             console.log('🛰️ Constellation creation requested with parameters:');
 
             console.log('  - Number of satellites:', numSatellites);
             console.log('  - Number of planes:', numPlanes);
-            console.log('  - Altitudes per Plan:', altitudesPerPlane);
+            console.log('  - Altitudes per Plane:', altitudesPerPlane);
             
             console.log('📡 Sending request to TravellingSpaceman API...');
             const response = await fetch('https://www.travellingspaceman.com/api/constellation', {
@@ -94,9 +92,9 @@ Ask: "Would you like to generate this constellation now?"
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                numSatellites,
-                numPlanes,
-                altitudesPerPlane,
+                numSatellites: Number(numSatellites),
+                numPlanes: Number(numPlanes),
+                altitudesPerPlane: Number(altitudesPerPlane),
               }),
             });
 
