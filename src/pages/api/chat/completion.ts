@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 // Ollama setup
 const ollama = createOllama({
-  baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
+  baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434/api',
 });
 
 export default async function handler(
