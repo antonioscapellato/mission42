@@ -6,7 +6,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { createOllama } from 'ollama-ai-provider';
 const ollama = createOllama({
     // optional settings, e.g.
-    baseURL: 'http://localhost:11434/api',
+    baseURL: process.env.OLLAMA_BASE_URL
 });
 
 export default async function handler(
@@ -34,7 +34,7 @@ export default async function handler(
     console.log('Generating response with Ollama...');
 
     const { text } = await generateText({
-      model: ollama('llama3.2:latest'),
+      model: ollama(process.env.OLLAMA_MODEL_NAME || ""),
       prompt: prompt,
       maxTokens: 512,
     });
