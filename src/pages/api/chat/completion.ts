@@ -75,15 +75,23 @@ Ask: "Would you like to generate this constellation now?"
           execute: async ({ numSatellites, numPlanes, altitudesPerPlane }) => {
             console.log('🛰️ Constellation creation requested with parameters:');
 
+            // Validate inputs before proceeding
+            if (!numSatellites || numSatellites < 1 || numSatellites > 60) {
+              throw new Error('Number of satellites must be between 1 and 60');
+            }
+
+            if (!numPlanes || numPlanes < 1 || numPlanes > 10) {
+              throw new Error('Number of planes must be between 1 and 10');
+            }
+
+            if (!altitudesPerPlane || altitudesPerPlane < 160 || altitudesPerPlane > 2000) {
+              throw new Error('Altitude must be between 160 and 2000 km');
+            }
+
             console.log('  - Number of satellites:', numSatellites);
             console.log('  - Number of planes:', numPlanes);
             console.log('  - Altitudes per Plane:', altitudesPerPlane);
             
-            // Ensure altitudesPerPlane is a number
-            const altitude = Number(altitudesPerPlane);
-            if (isNaN(altitude)) {
-              throw new Error('Invalid altitude value provided');
-            }
             
             console.log('📡 Sending request to TravellingSpaceman API...');
             const response = await fetch('https://www.travellingspaceman.com/api/constellation', {
@@ -94,7 +102,7 @@ Ask: "Would you like to generate this constellation now?"
               body: JSON.stringify({
                 numSatellites: numSatellites < 1 ? 1 : Number(numSatellites),
                 numPlanes: numPlanes < 1 ? 1 : Number(numPlanes),
-                altitudesPerPlane: altitude
+                altitudesPerPlane: altitudesPerPlane < 160 ? 160 : Number(altitudesPerPlane)
               }),
             });
 
