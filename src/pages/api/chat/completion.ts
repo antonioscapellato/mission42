@@ -79,6 +79,12 @@ Ask: "Would you like to generate this constellation now?"
             console.log('  - Number of planes:', numPlanes);
             console.log('  - Altitudes per Plane:', altitudesPerPlane);
             
+            // Ensure altitudesPerPlane is a number
+            const altitude = Number(altitudesPerPlane);
+            if (isNaN(altitude)) {
+              throw new Error('Invalid altitude value provided');
+            }
+            
             console.log('📡 Sending request to TravellingSpaceman API...');
             const response = await fetch('https://www.travellingspaceman.com/api/constellation', {
               method: 'POST',
@@ -88,7 +94,7 @@ Ask: "Would you like to generate this constellation now?"
               body: JSON.stringify({
                 numSatellites: numSatellites < 1 ? 1 : Number(numSatellites),
                 numPlanes: numPlanes < 1 ? 1 : Number(numPlanes),
-                altitudesPerPlane: 500
+                altitudesPerPlane: altitude
               }),
             });
 
