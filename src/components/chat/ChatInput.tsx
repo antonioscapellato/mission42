@@ -45,7 +45,6 @@ export const ChatInput = ({ onSendMessage, isLoading = false, message, onMessage
             onPress={onClearChat}
             size={"sm"}
             className="bg-default-200 text-default-900"
-            
           >
             Clear
           </Button>
@@ -54,7 +53,7 @@ export const ChatInput = ({ onSendMessage, isLoading = false, message, onMessage
             disabled={!message.trim() || isLoading}
             isIconOnly
             size={"sm"}
-            className={`${!message.trim() || isLoading ? 'bg-default-400' : 'bg-default-900'} text-default-100`}
+            className={`${!message.trim() || isLoading ? 'bg-default-200' : 'bg-default-900'} text-default-100`}
             startContent={<LuSend size={16} />}
           />
           </div>
