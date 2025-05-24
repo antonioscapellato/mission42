@@ -59,7 +59,7 @@ Ask: "Would you like to generate this constellation now?"
     const { text } = await generateText({
       model,
       prompt,
-      maxSteps: 1,
+      maxSteps: 2,
       maxTokens: 512,
       tools: {
         createConstellation: tool({
@@ -80,17 +80,12 @@ Ask: "Would you like to generate this constellation now?"
               })
             ]),
           }),
-          execute: async ({ numSatellites = 0, numPlanes = 0, altitudesPerPlane = 0 }) => {
+          execute: async ({ numSatellites = 1, numPlanes = 1, altitudesPerPlane = 160 }) => {
             console.log('🛰️ Constellation creation requested with parameters:');
+
             console.log('  - Number of satellites:', numSatellites);
             console.log('  - Number of planes:', numPlanes);
-            
-            // Convert single altitude to array if needed
-            const altitudes = Array.isArray(altitudesPerPlane) 
-              ? altitudesPerPlane 
-              : Array(numPlanes).fill(altitudesPerPlane);
-            
-            console.log('  - Altitudes per plane:', altitudes);
+            console.log('  - Altitudes per Plan:', altitudesPerPlane);
             
             console.log('📡 Sending request to TravellingSpaceman API...');
             const response = await fetch('https://www.travellingspaceman.com/api/constellation', {
@@ -101,7 +96,7 @@ Ask: "Would you like to generate this constellation now?"
               body: JSON.stringify({
                 numSatellites,
                 numPlanes,
-                altitudesPerPlane: Array.isArray(altitudesPerPlane) ? altitudesPerPlane[0] : altitudesPerPlane,
+                altitudesPerPlane,
               }),
             });
 
@@ -115,7 +110,7 @@ Ask: "Would you like to generate this constellation now?"
             console.log('  - Response status:', response.status);
             console.log('  - Response data:', JSON.stringify(result, null, 2));
             
-            return `Successfully created constellation with ${numSatellites} satellites across ${numPlanes} planes at altitudes ${altitudes.join(', ')} km`;
+            return `Successfully created constellation with ${numSatellites} satellites across ${numPlanes} planes at altitude ${altitudesPerPlane} km`;
           },
         }),
       },
