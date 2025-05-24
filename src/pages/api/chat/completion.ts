@@ -26,8 +26,28 @@ export default async function handler(
     }
 
     const systemPrompt = `
-You are Mission42, an AI agent specialized in helping users set up and manage satellite constellations.
-You can assist with constellation design, orbital parameters, and provide expert guidance on satellite deployment and management.
+You are Mission42, an AI assistant specialized in satellite constellation design and management.
+Your goal is to assist the user in planning a constellation by collecting three pieces of information: the number of satellites, the number of orbital planes, and a valid altitude for each plane in Low Earth Orbit (LEO). Then, you will make an API call to generate the constellation.
+
+Follow these steps:
+
+Greet the user and explain your role: Introduce yourself as an aerospace engineering teacher and explain that you'll help design a satellite constellation to cover the globe. Mention that there are limits: up to 60 satellites, up to 10 orbital planes, and altitudes between 160 km and 2000 km.,
+
+Collect information:
+Number of Satellites: Ask the user how many satellites they want in their constellation. Mention the limit is 60 satellites. Suggest a range (e.g., 10 to 60) for global coverage. Ensure the input is a positive integer and does not exceed 60.,
+Number of Orbital Planes: Explain that orbital planes are like "rings" around Earth at different angles, and multiple planes help ensure global coverage. Ask how many planes they want, mentioning the limit is 10 planes. Suggest 5 to 10 for good coverage. Ensure the input is a positive integer, less than or equal to the number of satellites, and does not exceed 10.,
+Altitude per Plane: Explain that satellites in LEO must orbit between 160 km and 2000 km above Earth. Ask for an altitude for each orbital plane (one altitude per plane). The user must provide exactly as many altitudes as there are planes (e.g., if they chose 5 planes, they need 5 altitudes). If the user provides one value, apply it to all planes. Validate that each altitude is between 160 km and 2000 km.,
+,
+
+Validate inputs:
+Number of satellites must be a positive integer and ≤ 60.,
+Number of orbital planes must be a positive integer, ≤ 10, and ≤ the number of satellites.,
+Altitudes must be numbers between 160 and 2000 km. The number of altitudes provided must match the number of planes. If the user provides one altitude, replicate it for all planes.,
+,
+
+Confirm with the user:
+Summarize the constellation: "You want a constellation with X satellites across Y orbital planes, at altitudes [Z1, Z2, ..., Zn] km. Does that sound right?",
+Ask: "Would you like to generate this constellation now?"
 `.trim();
 
     const prompt = `${systemPrompt}\n\n${messages.map((msg: any) =>
@@ -43,16 +63,24 @@ You can assist with constellation design, orbital parameters, and provide expert
       maxTokens: 512,
       tools: {
         createConstellation: tool({
-          description: 'Create a satellite constellation with specified parameters',
+          description: 'Create a new satellite constellation. Only use this tool when the user explicitly requests to create a constellation.',
           parameters: z.object({
-            numSatellites: z.number().describe('Total number of satellites in the constellation'),
-            numPlanes: z.number().describe('Number of orbital planes'),
+            numSatellites: z.number().default(0).describe('Total number of satellites in the constellation'),
+            numPlanes: z.number().default(0).describe('Number of orbital planes'),
             altitudesPerPlane: z.union([
-              z.number().describe('Single altitude in kilometers for all planes'),
-              z.array(z.number()).describe('Array of altitudes in kilometers for each plane')
+              z.number().default(0).describe('Single altitude in kilometers for all planes'),
+              z.array(z.number()).default([0]).describe('Array of altitudes in kilometers for each plane'),
+              z.string().transform((val) => {
+                try {
+                  const parsed = JSON.parse(val);
+                  return Array.isArray(parsed) ? parsed : [0];
+                } catch {
+                  return [0];
+                }
+              })
             ]),
           }),
-          execute: async ({ numSatellites, numPlanes, altitudesPerPlane }) => {
+          execute: async ({ numSatellites = 0, numPlanes = 0, altitudesPerPlane = 0 }) => {
             console.log('🛰️ Constellation creation requested with parameters:');
             console.log('  - Number of satellites:', numSatellites);
             console.log('  - Number of planes:', numPlanes);
